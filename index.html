@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚Vocab</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="preloader">
+        <div id="lottie-container"></div>
+    </div>
+    <script>
+        if (localStorage.getItem('vmTheme') === 'light') {
+            document.body.classList.add('light');
+        }
+    </script>
+
+    <nav id="topnav">
+        <div class="nav-logo">
+            <div id="logo-lottie" style="height: 64px; width: 64px; margin: -14px -5px;"></div>
+            <span>Vocab</span>
+        </div>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
+        <div class="nav-center" id="navLinks">
+            <button class="nav-btn" onclick="goHome()"><i class="ph ph-house" style="font-size: 1.1rem"></i>
+                Home</button>
+            <button class="nav-btn" id="navVocab" onclick="showSection('vocab')"><i class="ph ph-book-open-text"
+                    style="font-size: 1.1rem"></i> Vocabulary</button>
+            <button class="nav-btn" id="navQuiz" onclick="showSection('quiz')"><i class="ph ph-target"
+                    style="font-size: 1.1rem"></i> Quiz</button>
+            <button class="nav-btn" id="navBookmarks" onclick="showSection('bookmarks')"><i class="ph ph-heart"
+                    style="font-size: 1.1rem"></i> Bookmarks</button>
+            <button class="nav-btn" id="navAbout" onclick="showSection('about')"><i class="ph ph-chart-bar"
+                    style="font-size: 1.1rem"></i> Results</button>
+        </div>
+        <div class="nav-right">
+            <div class="streak-badge" id="streakBadge" title="Daily Streak">🔥 <span id="streakCount">0</span></div>
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Toggle dark / light mode">
+                <i class="ph-fill ph-sun" id="themeIcon" style="font-size: 1.1rem; color: #f5a623"></i>
+                <div class="toggle-track">
+                    <div class="toggle-thumb"></div>
+                </div>
+                <span id="themeLabel">Light</span>
+            </button>
+        </div>
+    </nav>
+
+    <section id="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-rings"><span></span><span></span><span></span></div>
+        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:100%;">
+            <div class="hero-badge">✦ VOCAB MASTER ✦</div>
+            <h1 class="hero-title">Learn Words,<br>Level Up</h1>
+            <p class="hero-sub">Master English vocabulary with interactive flashcards, 60+ quiz questions, and a
+                detailed results dashboard.</p>
+            <div class="hero-cta">
+                <button class="btn btn-primary" onclick="showSection('vocab')"><i class="ph ph-book-open-text"
+                        style="font-size: 1.25rem"></i> Explore Vocabulary</button>
+                <button class="btn btn-outline" onclick="showSection('quiz')"><i class="ph ph-target"
+                        style="font-size: 1.25rem"></i> Start Quiz</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- VOCABULARY -->
+    <section class="section" id="vocab">
+        <h2 class="section-title"><i class="ph-duotone ph-book-open-text"
+                style="vertical-align: middle; margin-right: 8px"></i>Vocabulary</h2>
+        <p class="section-desc">Select a class from the sidebar — hover the badge to see the Hindi meaning.</p>
+
+
+
+        <div class="sidebar-layout">
+            <aside class="class-sidebar">
+                <div class="sidebar-header" onclick="this.parentElement.classList.toggle('open')">
+                    Classes <i class="ph-bold ph-caret-down dropdown-icon" style="float:right; margin-top:2px;"></i>
+                </div>
+                <div class="sidebar-list" id="vocabClassList"></div>
+            </aside>
+            <div class="sidebar-content" id="wordsContainer">
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="ph-duotone ph-books" style="color: var(--accent)"></i></div>
+                    <p>Select a class from the sidebar<br>to begin exploring words.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="section" id="quiz">
+        <h2 class="section-title"><i class="ph-duotone ph-target"
+                style="vertical-align: middle; margin-right: 8px"></i>Quiz</h2>
+        <p class="section-desc">Pick a class and quiz type to begin.</p>
+        <div class="sidebar-layout">
+            <aside class="class-sidebar">
+                <div class="sidebar-header" onclick="this.parentElement.classList.toggle('open')">
+                    Classes <i class="ph-bold ph-caret-down dropdown-icon" style="float:right; margin-top:2px;"></i>
+                </div>
+                <div class="sidebar-list" id="quizClassList"></div>
+            </aside>
+            <div class="sidebar-content">
+                <div id="quizTypePanel" class="hidden">
+                    <h3 class="text-accent" style="margin-bottom:1rem;font-family:var(--fhead);font-size:1.3rem">Select
+                        Quiz Type:</h3>
+                    <div class="quiz-section-tabs">
+                        <button class="tab-btn active" data-type="mock"><i class="ph ph-mask-happy"
+                                style="font-size: 1.1rem"></i> Mock Test</button>
+                        <button class="tab-btn" data-type="synonyms"><i class="ph-fill ph-check-circle"
+                                style="font-size: 1.1rem; color: var(--correct)"></i> Synonyms</button>
+                        <button class="tab-btn" data-type="antonyms"><i class="ph-fill ph-x-circle"
+                                style="font-size: 1.1rem; color: var(--wrong)"></i> Antonyms</button>
+                        <button class="tab-btn" data-type="fillblank"><i class="ph ph-pencil-simple-line"
+                                style="font-size: 1.1rem"></i> Fill in the Blank</button>
+                        <button class="tab-btn" data-type="reading"><i class="ph ph-book-open"
+                                style="font-size: 1.1rem"></i> Reading</button>
+                        <button class="tab-btn" data-type="unseen"><i class="ph ph-magnifying-glass"
+                                style="font-size: 1.1rem"></i> Unseen Passage</button>
+                    </div>
+                    <button class="btn btn-primary mt2" onclick="startQuiz()"><i class="ph ph-rocket-launch"
+                            style="font-size: 1.25rem"></i> Start Quiz</button>
+                </div>
+                <div id="quizArea" class="hidden" style="margin-top:1rem">
+                    <div class="quiz-progress-wrap">
+                        <div class="quiz-progress-info">
+                            <span id="qProgressLabel">Question 1/10</span>
+                            <span id="qScoreLabel">Score: 0</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div id="questionHolder"></div>
+                    <div class="quiz-nav">
+                        <button class="btn btn-outline" id="prevBtn" onclick="prevQ()" style="visibility:hidden"><i
+                                class="ph ph-arrow-left"></i> Prev</button>
+                        <button class="btn btn-primary" id="nextBtn" onclick="nextQ()">Next <i
+                                class="ph ph-arrow-right"></i></button>
+                    </div>
+                </div>
+                <div id="quizEmpty" class="empty-state">
+                    <div class="empty-icon"><i class="ph-duotone ph-target" style="color: var(--accent)"></i></div>
+                    <p>Select a class from the sidebar<br>to start your quiz.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="results-panel">
+        <h2 class="section-title text-center"><i class="ph-duotone ph-trophy"
+                style="vertical-align: text-bottom; margin-right: 8px"></i>Results</h2>
+        <div class="result-hero">
+            <div class="score-ring" id="scoreRing">
+                <div class="score-num" id="scorePct">0%</div>
+            </div>
+            <div class="result-grade" id="resultGrade">—</div>
+            <div class="score-label" id="resultMsg"></div>
+        </div>
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-num c" id="correctCount">0</div>
+                <div class="stat-desc"><i class="ph-fill ph-check-circle" style="color:var(--correct)"></i> Correct
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num w" id="wrongCount">0</div>
+                <div class="stat-desc"><i class="ph-fill ph-x-circle" style="color:var(--wrong)"></i> Wrong</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num s" id="totalCount">0</div>
+                <div class="stat-desc"><i class="ph ph-chart-bar"></i> Total</div>
+            </div>
+        </div>
+        <div class="text-center" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="retryQuiz()"><i class="ph ph-arrows-clockwise"
+                    style="font-size: 1.2rem"></i> Try Again</button>
+            <button class="btn btn-outline" onclick="showSection('vocab')"><i class="ph ph-book-open-text"
+                    style="font-size: 1.2rem"></i> Study More</button>
+        </div>
+    </div>
+
+    <section class="section" id="bookmarks">
+        <h2 class="section-title"><i class="ph-duotone ph-heart"
+                style="vertical-align: middle; margin-right: 8px"></i>Bookmarks</h2>
+        <p class="section-desc">Review your saved difficult words here.</p>
+        <div class="sidebar-layout">
+            <div class="sidebar-content" id="bookmarksContainer" style="width: 100%;">
+                <div class="empty-state" id="bookmarksEmpty">
+                    <div class="empty-icon"><i class="ph-duotone ph-heart-break" style="color: var(--accent)"></i></div>
+                    <p>You haven't bookmarked any words yet.<br>Click the heart icon on any word to save it here.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="about">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+            <div>
+                <h2 class="section-title" style="margin-bottom: 0.5rem;"><i class="ph-duotone ph-clock-counter-clockwise"
+                        style="vertical-align: middle; margin-right: 8px"></i>Quiz History</h2>
+                <p class="section-desc" style="margin-bottom: 0;">Your previous quiz results appear here.</p>
+            </div>
+            <button class="btn btn-outline" onclick="clearHistory()" style="color: var(--wrong); border-color: var(--wrong);"><i class="ph ph-trash" style="vertical-align: middle; margin-right: 4px;"></i>Clear History</button>
+        </div>
+        <div class="chart-container" style="display:none; margin-bottom: 2rem;" id="chartWrapper">
+            <canvas id="progressChart"></canvas>
+        </div>
+        <div id="historyContainer">
+            <div style="text-align:center;color:var(--muted);padding:3rem">No results yet — go take a quiz!</div>
+        </div>
+    </section>
+
+    <!-- Clear History Modal -->
+    <div id="clearHistoryModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="ph-duotone ph-trash"></i>
+            </div>
+            <h3 class="modal-title">Clear History?</h3>
+            <p class="modal-desc">Are you sure you want to delete your entire quiz history? This action cannot be undone and will permanently remove all your past results.</p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeClearHistoryModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmClearHistory()"><i class="ph ph-warning-circle" style="margin-right: 6px; font-size: 1.1rem;"></i> Yes, Clear It</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="class_01.js"></script>
+    <script src="class_02.js"></script>
+    <script src="class_03.js"></script>
+    <script src="class_04.js"></script>
+    <script src="class_05.js"></script>
+    <script src="class_06.js"></script>
+    <script src="class_07.js"></script>
+    <script src="class_08.js"></script>
+    <script src="class_09.js"></script>
+    <script src="class_10.js"></script>
+    <script src="class_11.js"></script>
+    <script src="class_12.js"></script>
+    <script src="class_13.js"></script>
+    <script src="class_14.js"></script>
+    <script src="class_15.js"></script>
+    <script src="class_16.js"></script>
+    <script src="class_17.js"></script>
+    <script src="class_18.js"></script>
+    <script src="class_19.js"></script>
+    <script src="class_20.js"></script>
+    <script src="class_21.js"></script>
+    <script src="class_22.js"></script>
+    <script src="class_23.js"></script>
+    <script src="class_24.js"></script>
+    <script src="class_25.js"></script>
+    <script src="class_26.js"></script>
+    <script src="class_27.js"></script>
+    <script src="class_28.js"></script>
+    <script src="class_29.js"></script>
+    <script src="class_30.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
