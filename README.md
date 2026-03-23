@@ -8,7 +8,7 @@ Vocab Master ek standard vocabulary builder hai jo modular JavaScript ka use kar
 
 ## 🚀 Live Demo
 Aap iska live version yahan dekh sakte hain:  
-👉 **[Yahan Apna Live Link Daalein](https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/)**
+👉 **(https://ashishkfrontend.github.io/Vocab-master/)**
 
 ## 📱 Screenshots
 <p align="center">
